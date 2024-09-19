@@ -1,0 +1,15 @@
+.social-links {
+  position: fixed;
+  right: 20px; /* Adjust spacing from right */
+  top: 50%;
+  transform: translateY(-50%); /* Center vertically */
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Adjust spacing between icons */
+  z-index: 100; /* Ensure it's above other content */
+}
+
+.social-links a {
+  color: #fff; /* Adjust color to match your design */
+  text-decoration: none; /* Remove underline */
+}
