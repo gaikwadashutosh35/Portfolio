@@ -1,195 +1,172 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link, Element } from "react-scroll";
-import { motion, useScroll, useSpring } from "framer-motion";
-import "../ComponentsCSS/Header.css";
+import React, { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { FiArrowDown, FiMenu, FiX } from "react-icons/fi";
+import { links, sections } from "../data/portfolio";
+import { EASE } from "./ui";
 
-const sections = [
-  { id: "hero", title: "Hero" },
-  { id: "about", title: "About" },
-  { id: "projects", title: "Projects" },
-  { id: "skills", title: "Skills" },
-  { id: "contact", title: "Contact" },
-];
-
-const NavItem = ({ section, isActive, onClick }) => (
-  <motion.li
-    whileHover={{ scale: 1.1, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
-    whileTap={{ scale: 0.95 }}
-    className={`transition-transform ${
-      isActive ? "text-white font-bold" : "text-gray-300"
-    }`}
-  >
-    <Link
-      to={section.id}
-      smooth={true}
-      duration={500}
-      spy={true}
-      className={`cursor-pointer px-4 py-2 rounded-full ${
-        isActive
-          ? "bg-white bg-opacity-20"
-          : "hover:bg-white hover:bg-opacity-10"
-      }`}
-      onClick={onClick}
-    >
-      {section.title}
-    </Link>
-  </motion.li>
-);
-const menuVariants = {
-  open: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      staggerChildren: 0.2, // Delay each child animation
-      delayChildren: 0.1, // Wait a moment before starting the animation
-    },
-  },
-  closed: {
-    opacity: 0.5,
-    x: "100%",
-    transition: {
-      staggerChildren: 0.1,
-      staggerDirection: -1, // Reverse the order when closing
-    },
-  },
-};
-
-const menuItemVariants = {
-  open: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.5 },
-  },
-  closed: {
-    opacity: 1,
-    x: 50, // Slide out to the right when closing
-    transition: { duration: 0.5 },
-  },
+const useActiveSection = () => {
+  const [active, setActive] = useState(null);
+  useEffect(() => {
+    // A section is "active" while it crosses a thin band just above the viewport middle.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => entry.isIntersecting && setActive(entry.target.id));
+      },
+      { rootMargin: "-45% 0px -50% 0px" }
+    );
+    ["home", ...sections.map((s) => s.id)].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
+  return active;
 };
 
 const Header = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState(sections[0].id);
-
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
-
-  const handleSetActive = (to) => {
-    setActiveSection(to);
-    setMenuOpen(false);
-  };
-
-  const handleScrollCloseMenu = () => {
-    if (menuOpen) setMenuOpen(false);
-  };
+  const active = useActiveSection();
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const menuButton = useRef(null);
+  const firstLink = useRef(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      const windowHeight = window.innerHeight;
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-      sections.forEach((section) => {
-        const element = document.getElementById(section.id);
-        if (element) {
-          const { top, bottom } = element.getBoundingClientRect();
-          if (top <= windowHeight / 2 && bottom >= windowHeight / 2) {
-            setActiveSection(section.id);
-          }
-        }
-      });
-    };
-
-    handleScroll(); // Call initially to set the active section
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("scroll", handleScrollCloseMenu); // Close menu on scroll
+  useEffect(() => {
+    if (!open) return;
+    const button = menuButton.current;
+    const onKey = (e) => e.key === "Escape" && setOpen(false);
+    const onResize = () => window.innerWidth >= 768 && setOpen(false);
+    document.body.style.overflow = "hidden";
+    firstLink.current?.focus();
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onResize);
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("scroll", handleScrollCloseMenu); // Clean up event listeners
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("resize", onResize);
+      button?.focus({ preventScroll: true });
     };
-  }, [menuOpen]);
-  const { scrollY } = useScroll();
-  const backgroundColor = useSpring(scrollY, {
-    stiffness: 300,
-    damping: 30,
-  });
-  return (
-    <motion.header
-      className="header"
-      style={{
-        backgroundColor: scrollY > 50 ? "bg-gray-800" : "bg-gray-800",
-        transition: "background-color 0.3s ease",
-      }}
-      initial={{ y: -20 }}
-      animate={{ y: window.scrollY > 0 ? 0 : 10 }}
-      transition={{ duration: 1 }}
-    >
-      <motion.div
-        className={`menuButton ${menuOpen ? "open" : ""}`}
-        onClick={toggleMenu}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        whileTap={{ scale: 0.9 }}
-      >
-        <motion.div
-          className="bar"
-          animate={{
-            rotate: menuOpen ? 45 : 0,
-            y: menuOpen ? 6 : 0,
-            backgroundColor: menuOpen ? "#5a5656" : "#000",
-          }}
-          transition={{ duration: 0.5 }}
-        ></motion.div>
-        <motion.div
-          className="bar"
-          animate={{
-            opacity: menuOpen ? 0 : 1,
-            backgroundColor: menuOpen ? "#5a5656" : "#000",
-          }}
-          transition={{ duration: 0.5 }}
-        ></motion.div>
-        <motion.div
-          className="bar"
-          animate={{
-            rotate: menuOpen ? -45 : 0,
-            y: menuOpen ? -6 : 0,
-            backgroundColor: menuOpen ? "#5a5656" : "#000",
-          }}
-          transition={{ duration: 0.5 }}
-        ></motion.div>
-      </motion.div>
+  }, [open]);
 
-      <motion.div
-        className={`menu ${menuOpen ? "open" : ""}`}
-        initial="closed"
-        animate={menuOpen ? "open" : "closed"}
-        variants={menuVariants}
+  const solid = scrolled || open;
+
+  return (
+    <header
+      className={`fixed inset-x-0 top-0 z-40 transition-[background-color,border-color,backdrop-filter] duration-base ease-out ${
+        solid ? "border-b border-line bg-bg/75 backdrop-blur-xl" : "border-b border-transparent"
+      }`}
+    >
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-bg"
       >
-        <ul>
-          {sections.map((section) => {
-            const isActive = activeSection === section.id; // Check if this section is active
-            return (
-              <motion.li
-                key={section.id}
-                className={`menu-item ${isActive ? "active" : ""}`} // Add "active" class if isActive is true
-                variants={menuItemVariants} // Individual menu item animation
-              >
-                <a
-                  href={`#${section.id}`}
-                  onClick={() => {
-                    setMenuOpen(false);
-                    setActiveSection(section.id); // Set the active section on click
-                  }}
-                  className={isActive ? "active" : ""} // Optionally, add active class to anchor as well
+        Skip to content
+      </a>
+      <div className="shell flex h-[var(--header-h)] items-center justify-between gap-4">
+        <a href="#home" className="group flex items-center gap-3">
+          <span
+            aria-hidden="true"
+            className="grid h-9 w-9 place-items-center rounded-xl border border-line-strong bg-surface-2 font-display text-lg leading-none text-ink transition-colors duration-base group-hover:border-accent/60"
+          >
+            AG
+          </span>
+          <span className="sr-only text-sm font-medium tracking-tight text-ink sm:not-sr-only">Ashutosh Gaikwad</span>
+        </a>
+
+        <nav aria-label="Primary" className="hidden md:block">
+          <ul className="flex items-center gap-1 rounded-full border border-line bg-surface-1/60 p-1 backdrop-blur">
+            {sections.map((s) => {
+              const isActive = active === s.id;
+              return (
+                <li key={s.id} className="relative">
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-pill"
+                      className="absolute inset-0 rounded-full bg-white/[0.08] ring-1 ring-inset ring-white/10"
+                      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                    />
+                  )}
+                  <a
+                    href={`#${s.id}`}
+                    aria-current={isActive ? "location" : undefined}
+                    className={`relative block rounded-full px-4 py-1.5 text-sm transition-colors duration-fast ${
+                      isActive ? "text-ink" : "text-muted hover:text-ink"
+                    }`}
+                  >
+                    {s.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <a href={links.resumeDownload} className="btn-ghost hidden !min-h-[2.5rem] !px-4 !text-sm md:inline-flex">
+            Resume <FiArrowDown aria-hidden="true" className="btn-icon btn-icon-y" />
+          </a>
+          <button
+            ref={menuButton}
+            type="button"
+            className="icon-btn md:hidden"
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            aria-label={open ? "Close menu" : "Open menu"}
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <FiX size={20} /> : <FiMenu size={20} />}
+          </button>
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.nav
+            id="mobile-menu"
+            aria-label="Mobile"
+            className="absolute inset-x-0 top-full h-[calc(100dvh-var(--header-h))] border-t border-line bg-bg/95 backdrop-blur-xl md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: EASE }}
+          >
+            <ul className="shell flex flex-col pt-6">
+              {sections.map((s, i) => (
+                <motion.li
+                  key={s.id}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, ease: EASE, delay: 0.04 * i }}
+                  className="border-b border-line"
                 >
-                  {section.title}
-                </a>
-              </motion.li>
-            );
-          })}
-        </ul>
-      </motion.div>
-    </motion.header>
+                  <a
+                    ref={i === 0 ? firstLink : undefined}
+                    href={`#${s.id}`}
+                    onClick={() => setOpen(false)}
+                    aria-current={active === s.id ? "location" : undefined}
+                    className="flex items-baseline justify-between py-4 font-display text-3xl text-ink"
+                  >
+                    {s.label}
+                    <span className="font-mono text-xs text-subtle">0{i + 1}</span>
+                  </a>
+                </motion.li>
+              ))}
+            </ul>
+            <div className="shell mt-8">
+              <a href={links.resumeDownload} className="btn-primary w-full">
+                Download resume <FiArrowDown aria-hidden="true" />
+              </a>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+    </header>
   );
 };
 

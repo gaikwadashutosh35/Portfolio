@@ -1,208 +1,75 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import "../ComponentsCSS/Skills.css";
-import "animate.css";
+import React from "react";
+import {
+  SiAngular, SiBootstrap, SiCplusplus, SiCss3, SiDocker, SiGit, SiGithub, SiGnubash, SiGraphql,
+  SiHtml5, SiIntellijidea, SiJavascript, SiJsonwebtokens, SiMicrosoftsqlserver, SiMongodb, SiPython,
+  SiReact, SiSalesforce, SiSap, SiSpringboot, SiSpringsecurity, SiTailwindcss, SiVuedotjs,
+} from "react-icons/si";
+import { FaJava } from "react-icons/fa";
+import { TbApi, TbSql } from "react-icons/tb";
+import { VscAzure, VscVscode } from "react-icons/vsc";
+import { skillGroups } from "../data/portfolio";
+import { Reveal, SectionHeader, trackGlow } from "./ui";
 
-const skills = [
-  {
-    name: "Java",
-    imgSrc:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original-wordmark.svg",
-    proficiency: 80,
-  },
-  {
-    name: "Angular",
-    imgSrc:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg",
-    proficiency: 60,
-  },
-  {
-    name: "React",
-    imgSrc:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original-wordmark.svg",
-    proficiency: 80,
-  },
-  {
-    name: "C++",
-    imgSrc:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg",
-    proficiency: 50,
-  },
-  {
-    name: "JavaScript",
-    imgSrc:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-plain.svg",
-    proficiency: 90,
-  },
-  {
-    name: "HTML",
-    imgSrc:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
-    proficiency: 90,
-  },
-  {
-    name: "CSS",
-    imgSrc:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",
-    proficiency: 90,
-  },
-  {
-    name: "Python",
-    imgSrc:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original-wordmark.svg",
-    proficiency: 50,
-  },
-  {
-    name: "GraphQL",
-    imgSrc:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/graphql/graphql-plain-wordmark.svg",
-    proficiency: 70,
-  },
-  {
-    name: "SQL",
-    imgSrc:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original-wordmark.svg",
-    proficiency: 75,
-  },
-  {
-    name: "MongoDB",
-    imgSrc:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original-wordmark.svg",
-    proficiency: 70,
-  },
-  {
-    name: "Azure",
-    imgSrc:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/azure/azure-original-wordmark.svg",
-    proficiency: 60,
-  },
-  {
-    name: "REST API",
-    imgSrc: "https://cdn.svgapi.com/vector/10073/api-page.svg",
-    proficiency: 80,
-  },
-  {
-    name: "Salesforce",
-    imgSrc:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/salesforce/salesforce-original.svg",
-    proficiency: 40,
-  },
-  {
-    name: "SAP",
-    imgSrc:
-      "https://upload.wikimedia.org/wikipedia/commons/5/59/SAP_2011_logo.svg",
-    proficiency: 65,
-  },
-];
-const containerVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      staggerChildren: 0.2, // Delay between child elements
-    },
-  },
+const icons = {
+  Java: FaJava, JavaScript: SiJavascript, Python: SiPython, "C++": SiCplusplus, SQL: TbSql,
+  HTML: SiHtml5, CSS: SiCss3, Bash: SiGnubash, React: SiReact, Angular: SiAngular, "Vue.js": SiVuedotjs,
+  "Tailwind CSS": SiTailwindcss, Bootstrap: SiBootstrap, "Spring Boot": SiSpringboot,
+  "Spring Security": SiSpringsecurity, "REST API": TbApi, GraphQL: SiGraphql, JWT: SiJsonwebtokens,
+  "Microsoft SQL Server": SiMicrosoftsqlserver, MongoDB: SiMongodb, Azure: VscAzure, Docker: SiDocker,
+  Git: SiGit, GitHub: SiGithub, Salesforce: SiSalesforce, SAP: SiSap, "IntelliJ IDEA": SiIntellijidea,
+  "VS Code": VscVscode,
 };
 
-const cardVariants = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.5 },
-  },
-};
-const Skills = () => {
-  const [flippedCard, setFlippedCard] = useState(null); // Track the flipped card index
-  const [progressStart, setProgressStart] = useState(null); // Track which card should animate the progress bar
+// Bento spans on the 4-column desktop grid: two rows of 2+1+1 / 1+1+2.
+const spans = ["lg:col-span-2", "", "", "", "", "lg:col-span-2"];
 
-  const handleCardHover = (index) => {
-    setFlippedCard(index); // Set the card to be flipped
-    setProgressStart(null); // Reset progress before starting the animation
-    setTimeout(() => {
-      setProgressStart(index); // Start progress bar fill after the card has flipped
-    }, 300); // Add a delay to simulate the flip animation
-  };
-
-  const handleCardLeave = () => {
-    setFlippedCard(null); // Reset card flip on mouse leave
-    setProgressStart(null); // Reset progress bar animation
-  };
-
-  const handleCardClick = (index) => {
-    if (flippedCard === index) {
-      setFlippedCard(null); // Reset flip if the same card is clicked again
-      setProgressStart(null); // Reset progress bar
-    } else {
-      handleCardHover(index); // Flip and start progress
-    }
-  };
-
-  return (
-    <motion.section
-      id="skills"
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br py-20 bg-gray-800"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: false, amount: 0.3 }} // Trigger animation once when in view
-      variants={containerVariants} // Apply the container variants
-    >
-      <div className="container mx-auto px-6 md:px-12">
-        <h2 className="text-4xl font-bold mb-12 text-center text-white">
-          My Skills
-        </h2>
-        <motion.div
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: false, amount: 0.3 }} // Trigger animation once when in view
-          variants={containerVariants} // Apply the container variants
-        >
-          {skills.map((skill, index) => (
-            <motion.div
-              key={index}
-              className={`flip-card ${flippedCard === index ? "flipped" : ""}`}
-              onMouseEnter={() => handleCardHover(index)} // Flip on hover
-              onMouseLeave={handleCardLeave} // Unflip when mouse leaves
-              onClick={() => handleCardClick(index)} // Flip on click for mobile
-              variants={cardVariants} // Use card variants for animation
-              whileHover={{ scale: 1.05 }} // Slight scale on hover
-            >
-              <div className="flip-card-inner">
-                {/* Front side */}
-                <div className="flip-card-front">
-                  <img
-                    src={skill.imgSrc}
-                    alt={skill.name}
-                    className="w-20 h-20 object-contain mb-2"
-                  />
-                  <p className="text-white text-lg font-medium">{skill.name}</p>
-                </div>
-
-                {/* Back side */}
-                <div className="flip-card-back">
-                  <p className="text-white">{skill.name} - Proficiency</p>
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{
-                        width:
-                          progressStart === index
-                            ? `${skill.proficiency}%`
-                            : "0%",
-                      }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+const Skills = () => (
+  <section id="skills" className="section" aria-labelledby="skills-title">
+    <div className="shell">
+      <SectionHeader
+        id="skills-title"
+        index="04"
+        eyebrow="Skills & tools"
+        title={
+          <>
+            A practical, <em className="text-muted">full-stack toolkit.</em>
+          </>
+        }
+        intro="The languages, frameworks and platforms I work with, grouped by where they sit in the stack."
+      />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {skillGroups.map((g, i) => (
+          <Reveal
+            key={g.title}
+            delay={(i % 3) * 0.06}
+            onPointerMove={trackGlow}
+            className={`glow-card p-6 sm:p-7 ${spans[i]}`}
+          >
+            <div className="flex items-baseline justify-between">
+              <h3 className="text-base font-semibold tracking-tight text-ink">{g.title}</h3>
+              <span className="font-mono text-xs text-subtle">{String(g.items.length).padStart(2, "0")}</span>
+            </div>
+            <ul className="mt-5 flex flex-wrap gap-2">
+              {g.items.map((s) => {
+                const Icon = icons[s];
+                return (
+                  <li key={s} className="chip group/chip hover:border-accent/40 hover:bg-accent/[0.08] hover:text-ink">
+                    {Icon && (
+                      <Icon
+                        aria-hidden="true"
+                        className="shrink-0 text-[0.95rem] text-subtle transition-[color,transform] duration-base ease-out group-hover/chip:-rotate-6 group-hover/chip:scale-110 group-hover/chip:text-accent"
+                      />
+                    )}
+                    {s}
+                  </li>
+                );
+              })}
+            </ul>
+          </Reveal>
+        ))}
       </div>
-    </motion.section>
-  );
-};
+    </div>
+  </section>
+);
 
 export default Skills;

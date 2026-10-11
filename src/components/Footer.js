@@ -1,28 +1,28 @@
-// import React from 'react';
-
-// const Footer = () => {
-//   return (
-//     <footer className="py-4 bg-gray-800 text-center text-white">
-//       <p>© 2024 Ashutosh Gaikwad. All Rights Reserved.</p>
-//     </footer>
-//   );
-// };
-
-// export default Footer;
-
 import React from "react";
-// import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
+import { FiArrowUp } from "react-icons/fi";
+import { FaGithub, FaLinkedinIn } from "react-icons/fa";
+import { links, profile } from "../data/portfolio";
+import { ExternalLink } from "./ui";
 
-const Footer = () => {
-  return (
-    <footer className="py-3 bg-gray-800">
-      <div className="container mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-center">
-        <p className="text-gray-500 text-center">
-          &copy; {new Date().getFullYear()} Ashutosh Gaikwad. All rights reserved.
-        </p>
+const Footer = () => (
+  <footer className="border-t border-line">
+    <div className="shell flex flex-col items-center justify-between gap-6 py-10 text-sm text-muted sm:flex-row">
+      <p>
+        &copy; {new Date().getFullYear()} {profile.name}. All rights reserved.
+      </p>
+      <div className="flex items-center gap-2">
+        <ExternalLink href={links.github} className="icon-btn" aria-label="GitHub profile">
+          <FaGithub size={16} />
+        </ExternalLink>
+        <ExternalLink href={links.linkedin} className="icon-btn" aria-label="LinkedIn profile">
+          <FaLinkedinIn size={15} />
+        </ExternalLink>
+        <a href="#home" className="icon-btn" aria-label="Back to top">
+          <FiArrowUp size={16} />
+        </a>
       </div>
-    </footer>
-  );
-};
+    </div>
+  </footer>
+);
 
 export default Footer;
