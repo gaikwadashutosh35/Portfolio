@@ -165,6 +165,8 @@
 
 @keyframes float-y { 50% { transform: translateY(-8px); } }
 .float-slow { animation: float-y 7s ease-in-out infinite; }
+@keyframes tile-float { 50% { transform: translateY(-6px); } }
+.tile-float { animation: tile-float 4s ease-in-out infinite; }
 
 @keyframes scroll-dot {
   0% { transform: translateY(0); opacity: 0; }
@@ -207,5 +209,5 @@ dialog.resume-dialog::backdrop { background: rgb(0 0 0 / 0.7); backdrop-filter: 
 }
 /* Touch devices: keep the ambient light static, it costs battery for little gain. */
 @media (hover: none) {
-  .aurora, .float-slow { animation: none; }
+  .aurora, .float-slow, .tile-float { animation: none; }
 }

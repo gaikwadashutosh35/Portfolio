@@ -1,27 +1,43 @@
-import React from "react";
-import {
-  SiAngular, SiBootstrap, SiCplusplus, SiCss3, SiDocker, SiGit, SiGithub, SiGnubash, SiGraphql,
-  SiHtml5, SiIntellijidea, SiJavascript, SiJsonwebtokens, SiMicrosoftsqlserver, SiMongodb, SiPython,
-  SiReact, SiSalesforce, SiSap, SiSpringboot, SiSpringsecurity, SiTailwindcss, SiVuedotjs,
-} from "react-icons/si";
-import { FaJava } from "react-icons/fa";
-import { TbApi, TbSql } from "react-icons/tb";
-import { VscAzure, VscVscode } from "react-icons/vsc";
+import React, { useEffect, useRef } from "react";
+import { animate, motion, useInView, useMotionValue, useReducedMotion, useTransform } from "framer-motion";
 import { skillGroups } from "../data/portfolio";
-import { Reveal, SectionHeader, trackGlow } from "./ui";
-
-const icons = {
-  Java: FaJava, JavaScript: SiJavascript, Python: SiPython, "C++": SiCplusplus, SQL: TbSql,
-  HTML: SiHtml5, CSS: SiCss3, Bash: SiGnubash, React: SiReact, Angular: SiAngular, "Vue.js": SiVuedotjs,
-  "Tailwind CSS": SiTailwindcss, Bootstrap: SiBootstrap, "Spring Boot": SiSpringboot,
-  "Spring Security": SiSpringsecurity, "REST API": TbApi, GraphQL: SiGraphql, JWT: SiJsonwebtokens,
-  "Microsoft SQL Server": SiMicrosoftsqlserver, MongoDB: SiMongodb, Azure: VscAzure, Docker: SiDocker,
-  Git: SiGit, GitHub: SiGithub, Salesforce: SiSalesforce, SAP: SiSap, "IntelliJ IDEA": SiIntellijidea,
-  "VS Code": VscVscode,
-};
+import skillIcons from "./skillIcons";
+import { EASE, SectionHeader, trackGlow } from "./ui";
 
 // Bento spans on the 4-column desktop grid: two rows of 2+1+1 / 1+1+2.
 const spans = ["lg:col-span-2", "", "", "", "", "lg:col-span-2"];
+
+const panel = {
+  hidden: { opacity: 0, y: 40 },
+  show: (i) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.8, ease: EASE, delay: (i % 3) * 0.08, delayChildren: 0.25 + (i % 3) * 0.08, staggerChildren: 0.045 },
+  }),
+};
+const chip = {
+  hidden: { opacity: 0, y: 10, scale: 0.85 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 420, damping: 26 } },
+};
+const icon = {
+  hidden: { rotate: -90, scale: 0.4 },
+  show: { rotate: 0, scale: 1, transition: { type: "spring", stiffness: 300, damping: 18 } },
+};
+
+// Ticks the group's item count up from 00 when the panel comes into view.
+const Count = ({ value }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+  const reduce = useReducedMotion();
+  const count = useMotionValue(reduce ? value : 0);
+  const text = useTransform(count, (v) => String(Math.round(v)).padStart(2, "0"));
+  useEffect(() => {
+    if (!inView || reduce) return;
+    const controls = animate(count, value, { duration: 0.9, ease: EASE, delay: 0.2 });
+    return () => controls.stop();
+  }, [inView, reduce, value, count]);
+  return <motion.span ref={ref} className="font-mono text-xs tabular-nums text-subtle">{text}</motion.span>;
+};
 
 const Skills = () => (
   <section id="skills" className="section" aria-labelledby="skills-title">
@@ -37,35 +53,46 @@ const Skills = () => (
         }
         intro="The languages, frameworks and platforms I work with, grouped by where they sit in the stack."
       />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {skillGroups.map((g, i) => (
-          <Reveal
+          <motion.div
             key={g.title}
-            delay={(i % 3) * 0.06}
+            custom={i}
+            variants={panel}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.3 }}
             onPointerMove={trackGlow}
             className={`glow-card p-6 sm:p-7 ${spans[i]}`}
           >
             <div className="flex items-baseline justify-between">
               <h3 className="text-base font-semibold tracking-tight text-ink">{g.title}</h3>
-              <span className="font-mono text-xs text-subtle">{String(g.items.length).padStart(2, "0")}</span>
+              <Count value={g.items.length} />
             </div>
             <ul className="mt-5 flex flex-wrap gap-2">
               {g.items.map((s) => {
-                const Icon = icons[s];
+                const Icon = skillIcons[s];
                 return (
-                  <li key={s} className="chip group/chip hover:border-accent/40 hover:bg-accent/[0.08] hover:text-ink">
+                  <motion.li
+                    key={s}
+                    variants={chip}
+                    whileHover={{ y: -2 }}
+                    className="chip group/chip hover:border-accent/40 hover:bg-accent/[0.08] hover:text-ink"
+                  >
                     {Icon && (
-                      <Icon
-                        aria-hidden="true"
-                        className="shrink-0 text-[0.95rem] text-subtle transition-[color,transform] duration-base ease-out group-hover/chip:-rotate-6 group-hover/chip:scale-110 group-hover/chip:text-accent"
-                      />
+                      <motion.span variants={icon} className="inline-flex">
+                        <Icon
+                          aria-hidden="true"
+                          className="shrink-0 text-[0.95rem] text-subtle transition-[color,transform] duration-base ease-out group-hover/chip:-rotate-6 group-hover/chip:scale-110 group-hover/chip:text-accent"
+                        />
+                      </motion.span>
                     )}
                     {s}
-                  </li>
+                  </motion.li>
                 );
               })}
             </ul>
-          </Reveal>
+          </motion.div>
         ))}
       </div>
     </div>
