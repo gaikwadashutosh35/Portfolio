@@ -130,6 +130,7 @@ const Header = () => {
           <motion.nav
             id="mobile-menu"
             aria-label="Mobile"
+            data-lenis-prevent
             className="absolute inset-x-0 top-full h-[calc(100dvh-var(--header-h))] border-t border-line bg-bg/95 backdrop-blur-xl md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

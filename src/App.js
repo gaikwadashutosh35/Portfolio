@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { MotionConfig, motion, useScroll, useSpring } from "framer-motion";
+import Lenis from "lenis";
+import "lenis/dist/lenis.css";
+import TechMarquee from "./components/TechMarquee";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -21,21 +24,35 @@ const ScrollProgressBar = () => {
   );
 };
 
-const App = () => (
-  // reducedMotion="user": Motion drops transform animations when the OS asks for less motion.
-  <MotionConfig reducedMotion="user">
-    <ScrollProgressBar />
-    <Header />
-    <main id="main">
-      <Hero />
-      <About />
-      <Projects />
-      <Experience />
-      <Skills />
-      <Contact />
-    </main>
-    <Footer />
-  </MotionConfig>
-);
+// Inertial wheel scrolling. Touch keeps native scrolling (Lenis default) and
+// users who ask for reduced motion get the browser's own scrolling.
+const useSmoothScroll = () => {
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const lenis = new Lenis({ autoRaf: true, anchors: true, lerp: 0.09 });
+    return () => lenis.destroy();
+  }, []);
+};
+
+const App = () => {
+  useSmoothScroll();
+  return (
+    // reducedMotion="user": Motion drops transform animations when the OS asks for less motion.
+    <MotionConfig reducedMotion="user">
+      <ScrollProgressBar />
+      <Header />
+      <main id="main">
+        <Hero />
+        <TechMarquee />
+        <About />
+        <Projects />
+        <Experience />
+        <Skills />
+        <Contact />
+      </main>
+      <Footer />
+    </MotionConfig>
+  );
+};
 
 export default App;

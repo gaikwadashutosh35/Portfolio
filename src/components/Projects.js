@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useRef } from "react";
+import { motion, useScroll, useSpring } from "framer-motion";
 import { FiArrowUpRight, FiCheck } from "react-icons/fi";
 import { FaGithub } from "react-icons/fa";
 import { links, projects } from "../data/portfolio";
-import { ExternalLink, Reveal, SectionHeader, trackGlow } from "./ui";
+import { ExternalLink, Reveal, SectionHeader, trackGlow, useScrollValue } from "./ui";
 
 // Abstract illustrations of each product idea. These are deliberately stylised
 // (and labelled) so they are never mistaken for real screenshots.
@@ -97,8 +98,26 @@ const visuals = { board: BoardVisual, chart: ChartVisual };
 const ProjectCard = ({ project, index }) => {
   const Visual = visuals[project.visual];
   const flip = index % 2 === 1;
+  const ref = useRef(null);
+
+  // Entrance is scrubbed by scroll position (not time), springed so it never feels jumpy.
+  const { scrollYProgress: enter } = useScroll({ target: ref, offset: ["start end", "start 0.5"] });
+  const eased = useSpring(enter, { stiffness: 160, damping: 32, mass: 0.4 });
+  const scale = useScrollValue(eased, [0, 1], [0.9, 1]);
+  const rotateX = useScrollValue(eased, [0, 1], [12, 0]);
+  const opacity = useScrollValue(eased, [0, 0.7], [0.15, 1]);
+  // Illustration drifts inside its frame while the card passes through the viewport.
+  const { scrollYProgress: pass } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const visualY = useScrollValue(pass, [0, 1], ["-5%", "5%"]);
+
   return (
-    <Reveal as="article" className="glow-card group" onPointerMove={trackGlow} aria-labelledby={`${project.id}-title`}>
+    <motion.article
+      ref={ref}
+      style={{ scale, rotateX, opacity, transformOrigin: "50% 0%" }}
+      className="glow-card group"
+      onPointerMove={trackGlow}
+      aria-labelledby={`${project.id}-title`}
+    >
       <div className="grid overflow-hidden rounded-card lg:grid-cols-2">
         <div className={`relative border-b border-line bg-surface-2/60 lg:flex lg:items-center lg:border-b-0 ${flip ? "lg:order-2 lg:border-l" : "lg:border-r"}`}>
           <div
@@ -113,7 +132,9 @@ const ProjectCard = ({ project, index }) => {
               <span className="ml-auto font-mono text-[0.625rem] uppercase tracking-wider text-subtle">Illustration</span>
             </div>
             <div aria-hidden="true" className="aspect-[16/10] transition-transform duration-slow ease-out group-hover:scale-[1.03]">
-              <Visual />
+              <motion.div style={{ y: visualY, scale: 1.1 }} className="h-full">
+                <Visual />
+              </motion.div>
             </div>
           </div>
         </div>
@@ -168,7 +189,7 @@ const ProjectCard = ({ project, index }) => {
           )}
         </div>
       </div>
-    </Reveal>
+    </motion.article>
   );
 };
 
@@ -186,7 +207,7 @@ const Projects = () => (
         }
         intro="Two applications where I built both the React frontend and the Spring Boot backend — from authentication to real-time features."
       />
-      <div className="flex flex-col gap-8 sm:gap-10">
+      <div className="flex flex-col gap-8 sm:gap-10" style={{ perspective: 1400 }}>
         {projects.map((p, i) => (
           <ProjectCard key={p.id} project={p} index={i} />
         ))}

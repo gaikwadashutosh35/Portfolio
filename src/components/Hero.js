@@ -1,9 +1,9 @@
 import React, { useRef } from "react";
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import { FiArrowDown, FiArrowRight } from "react-icons/fi";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa";
 import { links, profile, timeline } from "../data/portfolio";
-import { EASE, ExternalLink } from "./ui";
+import { EASE, ExternalLink, useScrollValue } from "./ui";
 
 const stack = ["React", "Angular", "Java", "Spring Boot", "Azure"];
 const job = timeline.find((t) => t.type === "experience");
@@ -80,6 +80,14 @@ const CodeCard = () => {
 const Hero = () => {
   const ref = useRef(null);
 
+  // Scroll-out parallax: three layers moving at different speeds.
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const contentY = useScrollValue(scrollYProgress, [0, 1], [0, -140]);
+  const contentOpacity = useScrollValue(scrollYProgress, [0, 0.75], [1, 0]);
+  const cardY = useScrollValue(scrollYProgress, [0, 1], [0, -260]);
+  const cardRotate = useScrollValue(scrollYProgress, [0, 1], [0, -6]);
+  const backdropY = useScrollValue(scrollYProgress, [0, 1], [0, 180]);
+
   const onPointerMove = (e) => {
     if (e.pointerType !== "mouse") return;
     const r = ref.current.getBoundingClientRect();
@@ -96,15 +104,22 @@ const Hero = () => {
       className="relative isolate flex min-h-[100svh] items-center overflow-hidden pb-24 pt-[calc(var(--header-h)+3rem)]"
     >
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <div className="aurora aurora-a" />
-        <div className="aurora aurora-b" />
-        <div className="hero-grid absolute inset-0" />
+        <motion.div style={{ y: backdropY }} className="absolute inset-0">
+          <div className="aurora aurora-a" />
+          <div className="aurora aurora-b" />
+          <div className="hero-grid absolute inset-0" />
+        </motion.div>
         <div className="hero-spotlight absolute inset-0" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-bg" />
       </div>
 
       <div className="shell grid grid-cols-1 items-center gap-16 lg:grid-cols-[1.15fr_0.85fr]">
-        <motion.div variants={container} initial="hidden" animate="show">
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          style={{ y: contentY, opacity: contentOpacity }}
+        >
           <motion.p variants={item} className="eyebrow">
             <span className="relative flex h-2 w-2" aria-hidden="true">
               <span className="pulse-ring absolute inset-0 rounded-full bg-accent" />
@@ -160,7 +175,9 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 1, ease: EASE, delay: 0.45 }}
         >
-          <CodeCard />
+          <motion.div style={{ y: cardY, rotate: cardRotate }}>
+            <CodeCard />
+          </motion.div>
         </motion.div>
       </div>
 

@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
 
-// jsdom has no IntersectionObserver / matchMedia; the header and Motion's
-// viewport animations need both.
+// jsdom has no IntersectionObserver / ResizeObserver / matchMedia; the header,
+// Motion's viewport animations and Lenis need them.
 class IO {
   observe() {}
   unobserve() {}
@@ -11,6 +11,7 @@ class IO {
   }
 }
 window.IntersectionObserver = IO;
+window.ResizeObserver = IO;
 window.matchMedia =
   window.matchMedia ||
   ((query) => ({

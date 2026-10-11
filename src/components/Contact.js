@@ -101,6 +101,7 @@ const Contact = () => {
       <dialog
         ref={dialogRef}
         className="resume-dialog"
+        data-lenis-prevent
         aria-labelledby="resume-title"
         onClick={(e) => e.target === e.currentTarget && closeResume()}
       >

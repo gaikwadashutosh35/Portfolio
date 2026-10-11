@@ -35,6 +35,8 @@
   @media (prefers-reduced-motion: no-preference) {
     html { scroll-behavior: smooth; }
   }
+  /* Lenis drives scrolling itself; native smoothing on top makes it lag. */
+  html.lenis { scroll-behavior: auto; }
   body {
     @apply bg-bg font-sans text-ink antialiased;
     overflow-x: clip;
@@ -176,6 +178,11 @@
   100% { transform: scale(2.4); opacity: 0; }
 }
 .pulse-ring { animation: pulse-ring 2.4s var(--ease-out) infinite; }
+
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
 
 /* ---------- Resume dialog ---------- */
 dialog.resume-dialog {
