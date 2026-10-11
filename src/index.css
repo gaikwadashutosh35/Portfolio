@@ -168,6 +168,41 @@
 @keyframes tile-float { 50% { transform: translateY(-6px); } }
 .tile-float { animation: tile-float 4s ease-in-out infinite; }
 
+/* Logo tiles in the marquee: a shine sweeps each tile in turn (staggered by
+   --d, set per tile) and the logo turns gently in 3D. */
+.logo-tile {
+  @apply relative grid h-16 w-16 place-items-center overflow-hidden rounded-2xl border border-line shadow-card sm:h-20 sm:w-20;
+  background: linear-gradient(to bottom, rgb(255 255 255 / 0.07), rgb(255 255 255 / 0.01));
+  transition: border-color 300ms var(--ease-out), box-shadow 300ms var(--ease-out);
+}
+.logo-tile:hover {
+  border-color: rgb(var(--c-accent) / 0.6);
+  box-shadow: 0 0 0 1px rgb(var(--c-accent) / 0.25), 0 12px 32px -10px rgb(var(--c-accent) / 0.6);
+}
+.logo-tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 35%, rgb(255 255 255 / 0.16) 50%, transparent 65%);
+  transform: translateX(-130%);
+  animation: tile-shine 7s var(--ease-out) infinite;
+  animation-delay: var(--d, 0s);
+  pointer-events: none;
+}
+@keyframes tile-shine {
+  0%, 72% { transform: translateX(-130%); }
+  100% { transform: translateX(130%); }
+}
+.logo-icon {
+  animation: icon-turn 6s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes icon-turn {
+  0%, 100% { transform: perspective(240px) rotateY(-16deg) rotateX(4deg); }
+  50% { transform: perspective(240px) rotateY(16deg) rotateX(-4deg); }
+}
+.logo-tile:hover .logo-icon { animation-play-state: paused; }
+
 @keyframes scroll-dot {
   0% { transform: translateY(0); opacity: 0; }
   30% { opacity: 1; }
@@ -209,5 +244,5 @@ dialog.resume-dialog::backdrop { background: rgb(0 0 0 / 0.7); backdrop-filter: 
 }
 /* Touch devices: keep the ambient light static, it costs battery for little gain. */
 @media (hover: none) {
-  .aurora, .float-slow, .tile-float { animation: none; }
+  .aurora, .float-slow, .tile-float, .logo-tile::after, .logo-icon { animation: none; }
 }
