@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.34eef65d.css",
-    "main.js": "/static/js/main.a227acb5.js",
+    "main.css": "/static/css/main.d1a4b258.css",
+    "main.js": "/static/js/main.5476b5c3.js",
     "static/media/geist-latin-wght-normal.woff2": "/static/media/geist-latin-wght-normal.ee5d167b615cdb197f4a.woff2",
     "static/media/avatar.webp": "/static/media/avatar.e3057a0ad8e1b15abe71.webp",
     "static/media/geist-mono-latin-wght-normal.woff2": "/static/media/geist-mono-latin-wght-normal.8915f32bc9d51b44d11a.woff2",
@@ -24,11 +24,11 @@
     "static/media/geist-mono-cyrillic-ext-wght-normal.woff2": "/static/media/geist-mono-cyrillic-ext-wght-normal.69fc1fa0544d8241186e.woff2",
     "static/media/geist-mono-symbols2-wght-normal.woff2": "/static/media/geist-mono-symbols2-wght-normal.2d848fc9308af046051c.woff2",
     "index.html": "/index.html",
-    "main.34eef65d.css.map": "/static/css/main.34eef65d.css.map",
-    "main.a227acb5.js.map": "/static/js/main.a227acb5.js.map"
+    "main.d1a4b258.css.map": "/static/css/main.d1a4b258.css.map",
+    "main.5476b5c3.js.map": "/static/js/main.5476b5c3.js.map"
   },
   "entrypoints": [
-    "static/css/main.34eef65d.css",
-    "static/js/main.a227acb5.js"
+    "static/css/main.d1a4b258.css",
+    "static/js/main.5476b5c3.js"
   ]
 }
