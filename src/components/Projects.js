@@ -8,8 +8,7 @@ const projects = [
     description:
       "Developed and deployed a full-stack task management system using React and Spring Boot, showcasing self-reliance and proficiency in both frontend and backend development.",
     videoId: "FAxay2A9tCs",
-    previewImage:
-      "https://i.ytimg.com/an_webp/3VbUz5dbNCg/mqdefault_6s.webp?du=3000&sqp=CKiSsLcG&rs=AOn4CLAV35zLP2XyuN2OjzitEDmyhXmsRg",
+    previewImage: "https://i.ytimg.com/vi/FAxay2A9tCs/hqdefault.jpg",
     github: "https://github.com/gaikwadashutosh35/ProjectManagementSystem",
     // live: "https://project-one.live",
   },
