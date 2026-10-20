@@ -213,7 +213,7 @@ const Projects = () => (
         ))}
       </div>
       <Reveal className="mt-12 flex justify-center">
-        <ExternalLink href={links.github} className="link-underline font-mono text-sm">
+        <ExternalLink href={links.github} className="link-underline min-h-[1.5rem] font-mono text-sm">
           More on GitHub <FiArrowUpRight aria-hidden="true" />
         </ExternalLink>
       </Reveal>
