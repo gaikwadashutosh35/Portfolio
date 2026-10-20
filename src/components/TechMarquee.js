@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import {
-  motion, useAnimationFrame, useInView, useMotionValue, useReducedMotion,
+  MotionConfig, motion, useAnimationFrame, useInView, useMotionValue,
   useScroll, useSpring, useTransform, useVelocity,
 } from "framer-motion";
 import { skillGroups } from "../data/portfolio";
@@ -11,7 +11,8 @@ import { EASE } from "./ui";
 // "ScrollVelocity"; written from scratch). Drifts, speeds up and follows your
 // scroll direction, leans into fast scrolls, spotlights the logo at the centre
 // and eases to a stop under the pointer. Purely decorative: the same skills are
-// listed by name in #skills.
+// listed by name in #skills. By the owner's choice it animates even when the OS
+// asks for reduced motion (see .always-animate in index.css).
 const wrap = (min, max, v) => {
   const range = max - min;
   return ((((v - min) % range) + range) % range) + min;
@@ -26,7 +27,6 @@ const Row = ({ items, baseVelocity }) => {
   const tiles = useRef([]);
   const geometry = useRef({ width: 0, track: 0, centers: [] });
   const inView = useInView(ref);
-  const reduce = useReducedMotion();
   const baseX = useMotionValue(0);
   const direction = useRef(1);
   const hovered = useRef(false);
@@ -56,7 +56,7 @@ const Row = ({ items, baseVelocity }) => {
   }, []);
 
   useAnimationFrame((_, delta) => {
-    if (reduce || !inView) return;
+    if (!inView) return;
     // Ease toward a stop while hovered, back to full speed when the pointer leaves.
     speed.current += ((hovered.current ? 0 : 1) - speed.current) * Math.min(1, delta / 160);
     const f = velocityFactor.get();
@@ -90,7 +90,7 @@ const Row = ({ items, baseVelocity }) => {
       onPointerEnter={() => (hovered.current = true)}
       onPointerLeave={() => (hovered.current = false)}
     >
-      <motion.div ref={track} style={{ x, skewX: reduce ? 0 : skewX }} className="relative flex w-max">
+      <motion.div ref={track} style={{ x, skewX }} className="relative flex w-max">
         {[0, 1].map((copy) => (
           <ul key={copy} className="flex shrink-0 gap-x-4 pr-4 sm:gap-x-6 sm:pr-6">
             {items.map((s, i) => {
@@ -121,11 +121,14 @@ const Row = ({ items, baseVelocity }) => {
 };
 
 const TechMarquee = () => (
-  <div aria-hidden="true" className="relative space-y-1 overflow-hidden border-y border-line py-8 sm:space-y-3 sm:py-12">
-    <div className="pointer-events-none absolute left-1/2 top-1/2 h-40 w-[36rem] max-w-full -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-strong/20 blur-3xl" />
-    <Row items={skills} baseVelocity={-1.4} />
-    <Row items={[...skills].reverse()} baseVelocity={1.4} />
-  </div>
+  // reducedMotion="never" overrides the app-wide "user" setting so the rows still slide in.
+  <MotionConfig reducedMotion="never">
+    <div aria-hidden="true" className="always-animate relative space-y-1 overflow-hidden border-y border-line py-8 sm:space-y-3 sm:py-12">
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-40 w-[36rem] max-w-full -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-strong/20 blur-3xl" />
+      <Row items={skills} baseVelocity={-1.4} />
+      <Row items={[...skills].reverse()} baseVelocity={1.4} />
+    </div>
+  </MotionConfig>
 );
 
 export default TechMarquee;
