@@ -1,170 +1,89 @@
-import React from "react";
-import { motion, useInView } from "framer-motion";
-import boyImage from "../Assets/A Boy 2.jpg";
+import React, { useRef } from "react";
+import { motion, useScroll } from "framer-motion";
+import avatar from "../Assets/avatar.webp";
+import avatarSmall from "../Assets/avatar-400.webp";
+import { about, timeline } from "../data/portfolio";
+import { Reveal, SectionHeader, useScrollValue } from "./ui";
+
+const school = timeline.find((t) => t.type === "education");
+
 const About = () => {
-  const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        staggerChildren: 0.3, // Delay between child elements
-      },
-    },
-  };
-
-  const textVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8 } },
-  };
-
-  const imageVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 1 } },
-  };
-
-  const progressVariants = {
-    hidden: { height: "0%" },
-    visible: { height: "100%", transition: { duration: 1.5 } },
-  };
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const portraitY = useScrollValue(scrollYProgress, [0, 1], [60, -60]);
 
   return (
-    <motion.section
-      id="about"
-      className="min-h-screen flex items-center justify-center bg-gradient-to-br py-20 bg-gray-800"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: false, amount: 0.3 }} // Trigger animation once when in view
-      variants={containerVariants} // Apply the container variants
-    >
-      <div className="container mx-auto px-4 sm:px-6 md:px-12">
-        <motion.h2
-          className="text-3xl sm:text-4xl font-bold mb-6 text-center text-white"
-          variants={textVariants} // Apply the text variants to animate on scroll
-        >
-          About Me
-        </motion.h2>
-        <div className="container bg-gray-700 py-8 px-6 sm:py-12 rounded-xl shadow-lg ">
-          <div className="flex flex-col md:flex-row items-center ">
-            {/* Image Animation */}
-            <motion.div
-              className="w-full md:w-1/2 mb-6 md:mb-0"
-              variants={imageVariants} // Apply the image animation on scroll
-            >
-              <img
-                src={boyImage}
-                alt="About me"
-                className="rounded-full shadow-lg mx-auto w-40 h-40 sm:w-48 sm:h-48 md:w-60 md:h-60"
+    <section id="about" ref={ref} className="section" aria-labelledby="about-title">
+      <div className="shell">
+        <SectionHeader
+          id="about-title"
+          index="01"
+          eyebrow="About"
+          title={
+            <>
+              Computer engineer, <em className="text-muted">building for the web.</em>
+            </>
+          }
+        />
+
+        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <Reveal className="mx-auto w-full max-w-sm lg:mx-0">
+            <motion.figure style={{ y: portraitY }} className="relative">
+              <div
+                aria-hidden="true"
+                className="absolute -inset-px rounded-panel bg-gradient-to-br from-accent/60 via-white/10 to-sky-400/30"
               />
-            </motion.div>
-
-            {/* Text Animation */}
-            <motion.div
-              className="w-full md:w-1/2 md:pl-12"
-              variants={textVariants}
-            >
-              <p className="text-base sm:text-lg text-white leading-relaxed">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam
-                scelerisque aliquam odio et faucibus. Proin eget urna varius,
-                gravida purus sit amet, mattis enim.
-              </p>
-              <p className="text-base sm:text-lg text-white leading-relaxed mt-4">
-                Fusce porta tincidunt justo, non tincidunt felis sagittis eget.
-                Vivamus nec commodo turpis. Donec scelerisque condimentum
-                mauris, sed tempor arcu ultrices eu.
-              </p>
-            </motion.div>
-          </div>
-        </div>
-        <div
-          className="flex flex-col ml-0 md:ml-36 md:flex-row items-center justify-center
-        mt-12 md:mt-16"
-        >
-          <div className="md:w-1/2 space-y-12">
-            {/* Education Section */}
-            <motion.div
-              className="flex flex-row md:flex-row items-center"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: false, amount: 0.3 }}
-            >
-              <div className="flex mr-0 md:mr-8 md:w-1/4 items-start mb-4 md:mb-0">
-                <motion.p
-                  className="text-md md:text-lg text-white mb-2"
-                  variants={textVariants}
-                >
-                  Bachelor of Engineering (Computer Engineering)
-                </motion.p>
-              </div>
-
-              <div className="relative ml-4 w-2 h-48  border-2 border-white flex-shrink-0">
-                <div className="absolute mx-4 top-0 w-full text-center text-gray-400 text-xs md:text-sm">
-                  2017
-                </div>
-                <div className="absolute mx-4 bottom-0 w-full text-center text-gray-400 text-xs md:text-sm">
-                  2021
-                </div>
-                <motion.div
-                  className="absolute top-0 left-0 w-full bg-indigo-500"
-                  variants={progressVariants}
-                  initial="hidden"
-                  whileInView="visible"
+              <div className="relative overflow-hidden rounded-panel bg-surface-1 p-2">
+                <img
+                  src={avatar}
+                  srcSet={`${avatarSmall} 400w, ${avatar} 720w`}
+                  sizes="(min-width: 640px) 368px, calc(100vw - 3rem)"
+                  alt="Illustrated avatar of Ashutosh Gaikwad"
+                  width="720"
+                  height="720"
+                  loading="lazy"
+                  decoding="async"
+                  className="aspect-square w-full rounded-[1.4rem] object-cover"
                 />
               </div>
+              <figcaption className="mt-4 flex items-center justify-between font-mono text-xs text-subtle">
+                <span>{school.org}</span>
+                <span>{school.period.replace(/\s/g, "")}</span>
+              </figcaption>
+            </motion.figure>
+          </Reveal>
 
-              <motion.p
-                className="text-md md:text-lg text-white md:w-3/4 ml-4"
-                variants={textVariants}
-              >
-                Completed in 2021, majoring in Computer Engineering. Acquired
-                fundamental skills in software development and computer systems.
-              </motion.p>
-            </motion.div>
+          <div>
+            {about.paragraphs.map((p, i) => (
+              <Reveal key={i} as="p" delay={i * 0.08} className="mb-5 text-lg leading-relaxed text-muted first:text-xl first:text-ink sm:first:text-2xl sm:first:leading-snug">
+                {p}
+              </Reveal>
+            ))}
 
-            {/* Experience Section */}
-            <motion.div
-              className="flex flex-row items-center"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: false, amount: 0.3 }}
-            >
-              <div className="flex mr-3.5 md:mr-8 w-1/4 items-start mb-4 md:mb-0">
-                <motion.p
-                  className="text-md md:text-lg text-white mb-2"
-                  variants={textVariants}
-                >
-                  Fujitsu Consulting India
-                </motion.p>
-              </div>
+            <Reveal delay={0.15} className="mt-10">
+              <h3 className="font-mono text-xs uppercase tracking-[0.18em] text-subtle">Where I focus</h3>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {about.focus.map((f) => (
+                  <li key={f} className="chip text-ink">
+                    <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-accent" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
 
-              <div className="relative w-2 ml-4  h-48 border-2 border-white flex-shrink-0">
-                <div className="absolute mx-4  top-0 w-full text-center text-gray-400 text-xs md:text-sm">
-                  2022
-                </div>
-                <div className="absolute mx-4  bottom-0 w-full text-center text-gray-400 text-xs md:text-sm">
-                  Present
-                </div>
-                <motion.div
-                  className="absolute top-0 left-0 w-full bg-green-500"
-                  variants={progressVariants}
-                  initial="hidden"
-                  whileInView="visible"
-                />
-              </div>
-
-              <motion.p
-                className="text-md  md:text-lg text-white md:w-3/4 ml-4"
-                variants={textVariants}
-              >
-                Over 3 years of experience in web development, focusing on
-                full-stack technologies and project management.
-              </motion.p>
-            </motion.div>
+            <dl className="mt-10 grid gap-3 sm:grid-cols-3">
+              {about.highlights.map((h, i) => (
+                <Reveal key={h.label} delay={0.2 + i * 0.07} className="rounded-card border border-line bg-surface-1 p-5 shadow-card transition-colors duration-base hover:border-line-strong">
+                  <dt className="font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-accent">{h.label}</dt>
+                  <dd className="mt-3 text-sm leading-relaxed text-ink">{h.value}</dd>
+                </Reveal>
+              ))}
+            </dl>
           </div>
         </div>
       </div>
-    </motion.section>
+    </section>
   );
 };
 

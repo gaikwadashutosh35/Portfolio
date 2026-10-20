@@ -1,14 +1,31 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { render, screen, within } from "@testing-library/react";
+import App from "./App";
+import { links, projects, sections } from "./data/portfolio";
 
-test('renders hero heading', () => {
+test("renders identity, navigation and every project", () => {
   render(<App />);
-  const heading = screen.getByText(/Hello, I'm Ashutosh Gaikwad/i);
-  expect(heading).toBeInTheDocument();
+
+  expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Ashutosh Gaikwad");
+
+  const nav = screen.getByRole("navigation", { name: "Primary" });
+  sections.forEach((s) => {
+    const link = within(nav).getByRole("link", { name: s.label });
+    expect(link).toHaveAttribute("href", `#${s.id}`);
+    expect(document.getElementById(s.id)).not.toBeNull();
+  });
+
+  projects.forEach((p) => {
+    expect(screen.getByRole("heading", { name: p.title })).toBeInTheDocument();
+  });
 });
 
-test('project preview image matches its video', () => {
+test("external links open safely and point at real profiles", () => {
   render(<App />);
-  const preview = screen.getByAltText('Project Task Management System');
-  expect(preview.src).toContain('FAxay2A9tCs');
+  const external = screen.getAllByRole("link").filter((a) => a.target === "_blank");
+  expect(external.length).toBeGreaterThan(0);
+  external.forEach((a) => expect(a).toHaveAttribute("rel", "noopener noreferrer"));
+
+  const hrefs = external.map((a) => a.getAttribute("href"));
+  expect(hrefs).toContain(links.github);
+  expect(hrefs).toContain(links.linkedin);
 });
