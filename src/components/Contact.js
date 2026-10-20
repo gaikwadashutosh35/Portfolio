@@ -51,7 +51,9 @@ const Contact = () => {
               intro="Have a role, a project or a question? Reach out on LinkedIn, browse my code on GitHub, or grab my resume."
             />
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {/* Three columns only fit their content from xl; between md and xl the
+                Resume card spans the row with its buttons on the right. */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
               {channels.map(({ label, detail, href, Icon }, i) => (
                 <Reveal key={label} delay={i * 0.06} className="glow-card bg-surface-2/60" onPointerMove={trackGlow}>
                   <ExternalLink
@@ -74,7 +76,11 @@ const Contact = () => {
                 </Reveal>
               ))}
 
-              <Reveal delay={0.12} className="glow-card bg-surface-2/60 p-5 sm:p-6" onPointerMove={trackGlow}>
+              <Reveal
+                delay={0.12}
+                className="glow-card bg-surface-2/60 p-5 sm:p-6 md:col-span-2 md:flex md:items-center md:justify-between md:gap-6 xl:col-span-1 xl:block"
+                onPointerMove={trackGlow}
+              >
                 <div className="flex items-center gap-4">
                   <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-line-strong bg-surface-3 text-ink">
                     <FiFileText aria-hidden="true" size={18} />
@@ -84,7 +90,7 @@ const Contact = () => {
                     <span className="block text-sm text-muted">PDF via Google Drive</span>
                   </span>
                 </div>
-                <div className="mt-4 flex gap-2">
+                <div className="mt-4 flex gap-2 md:mt-0 xl:mt-4">
                   <button type="button" onClick={openResume} className="btn-ghost !min-h-[2.5rem] flex-1 !px-3 !text-sm">
                     Preview
                   </button>
