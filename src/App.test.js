@@ -1,6 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import App from "./App";
-import { links, projects, sections } from "./data/portfolio";
+import { links, projects, sections, skillGroups } from "./data/portfolio";
 
 test("renders identity, navigation and every project", () => {
   render(<App />);
@@ -28,4 +28,21 @@ test("external links open safely and point at real profiles", () => {
   const hrefs = external.map((a) => a.getAttribute("href"));
   expect(hrefs).toContain(links.github);
   expect(hrefs).toContain(links.linkedin);
+});
+
+test("skills section is the logo marquee, with every skill named", () => {
+  render(<App />);
+  const skills = document.getElementById("skills");
+  const names = skillGroups.flatMap((g) => g.items);
+
+  // The marquee lives only in #skills, and each logo shows its name on hover.
+  const tiles = [...document.querySelectorAll(".logo-tile")];
+  expect(tiles.length).toBeGreaterThan(0);
+  tiles.forEach((t) => {
+    expect(skills).toContainElement(t);
+    expect(names).toContain(t.getAttribute("title"));
+  });
+
+  // The marquee is decorative, so screen readers get the names as a list.
+  names.forEach((n) => expect(within(skills).getByText(n)).toBeInTheDocument());
 });

@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { MotionConfig, motion, useScroll, useSpring } from "framer-motion";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
-import TechMarquee from "./components/TechMarquee";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -43,7 +42,6 @@ const App = () => {
       <Header />
       <main id="main">
         <Hero />
-        <TechMarquee />
         <About />
         <Projects />
         <Experience />

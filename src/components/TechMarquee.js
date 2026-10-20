@@ -103,7 +103,7 @@ const Row = ({ items, baseVelocity }) => {
                   // Index-based negative delays turn per-tile loops into waves that travel along the row.
                   style={{ "--d": `${-((i * 0.18) % 7)}s`, animationDelay: `${-((i * 0.53) % 4)}s` }}
                 >
-                  <span ref={(el) => (tiles.current[n] = el)} className="logo-tile group/tile block">
+                  <span ref={(el) => (tiles.current[n] = el)} title={s} className="logo-tile group/tile block">
                     <Icon
                       className={`logo-icon text-[1.75rem] transition-colors duration-base group-hover/tile:text-accent-soft sm:text-[2.1rem] ${
                         i % 4 === 1 ? "text-accent" : "text-ink/80"
