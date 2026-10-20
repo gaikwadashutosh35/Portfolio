@@ -76,7 +76,10 @@ const Header = () => {
           >
             AG
           </span>
-          <span className="sr-only text-sm font-medium tracking-tight text-ink sm:not-sr-only">Ashutosh Gaikwad</span>
+          {/* Hidden at md: next to the desktop nav and Resume button there's no room before lg. */}
+          <span className="sr-only text-sm font-medium tracking-tight text-ink sm:not-sr-only md:sr-only lg:not-sr-only">
+            Ashutosh Gaikwad
+          </span>
         </a>
 
         <nav aria-label="Primary" className="hidden md:block">
