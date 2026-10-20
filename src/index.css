@@ -235,8 +235,9 @@ dialog.resume-dialog::backdrop { background: rgb(0 0 0 / 0.7); backdrop-filter: 
 @keyframes fade-in { from { opacity: 0; } }
 
 /* ---------- Motion preferences ---------- */
+/* The skills marquee (.always-animate) is exempt by the owner's choice. */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  :not(.always-animate *), :not(.always-animate *)::before, :not(.always-animate *)::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
