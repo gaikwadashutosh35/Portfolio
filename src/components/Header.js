@@ -117,7 +117,6 @@ const Header = () => {
     <motion.header
       className="header"
       style={{
-        backgroundColor: scrollY > 50 ? "bg-gray-800" : "bg-gray-800",
         transition: "background-color 0.3s ease",
       }}
       initial={{ y: -20 }}
